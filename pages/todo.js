@@ -47,7 +47,7 @@ const Event = () => {
                           return {
                             eventID: doc.id,
                             eventName: doc.data().name,
-                            eventName: doc.data().thing,
+                            eventThing: doc.data().thing,
                             eventDate: doc.data().date.toDate().toDateString()
                           }
                         }
@@ -110,11 +110,10 @@ const Event = () => {
                     pointerEvents="none"
                     children={<AddIcon color="gray.300" />}
                 />
+                
                 <Input type="text" value={inputName} onChange={(e) => setInputName(e.target.value)} placeholder="Class" />
                 <Input type="text" value={inputThing} onChange={(e) => setInputThing(e.target.value)} placeholder="Homework" />
                 <Input type="date" value={inputDate} onChange={(e) => setInputDate(e.target.value)} placeholder="Event Date" />
-                
-                
 
                 <Button
                     ml={4}
@@ -164,8 +163,5 @@ export const getServerSideProps = withAuthUserTokenSSR({
 export default withAuthUser({
     whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
     whenUnauthedBeforeInit: AuthAction.REDIRECT_TO_LOGIN,
-<<<<<<< HEAD
 })(Event)
-=======
-})(Todo)
->>>>>>> 786c7c5fb03ba0a6f60e9ab86b7188dc8a664ff3
+
