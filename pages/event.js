@@ -25,19 +25,14 @@ import 'firebase/firestore'
 const Event = () => {
     const AuthUser = useAuthUser()
     const [inputName, setInputName] = useState('')
-    const [inputThing, setInputThing] = useState('')
     const [inputDate, setInputDate] = useState('')
     const [events, setEvents] = useState([])
-
-    // console.log(AuthUser)
-    // console.log(todos)
 
     useEffect(() => {
         AuthUser.id &&
             firebase
                 .firestore()
                 .collection("events")
-                //.orderBy('timestamp', 'desc')
                 .where( 'user', '==', AuthUser.id )
                 .onSnapshot(
                   snapshot => {
@@ -47,36 +42,29 @@ const Event = () => {
                           return {
                             eventID: doc.id,
                             eventName: doc.data().name,
-                            eventName: doc.data().thing,
                             eventDate: doc.data().date.toDate().toDateString()
-                          }
+                          }  
                         }
                       )
                     );
-                  }
-                )
-              }
-            )
-                          
-                        
+                })
+    })
+
     const sendData = () => {
         try {
             // try to update doc
             firebase
                 .firestore()
-                .collection("events") // each user will have their own collection
-                //.doc(input) // set the collection name to the input so that we can easily delete it later on
+                .collection("events") // all users will share one collection in this model
                 .add({
-                    name: inputName,
-                    thing: inputThing,
-                    date: firebase.firestore.Timestamp.fromDate( new Date(inputDate) ),
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    user: AuthUser.id
+                  name: inputName,
+                  date: firebase.firestore.Timestamp.fromDate( new Date(inputDate) ),
+                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                  user: AuthUser.id
                 })
                 .then(console.log('Data was successfully sent to cloud firestore!'));
-            setInputName('');
-            setInputThing('');
-            setInputDate('');
+              setInputName('');
+              setInputDate('');
         } catch (error) {
             console.log(error)
         }
@@ -110,17 +98,13 @@ const Event = () => {
                     pointerEvents="none"
                     children={<AddIcon color="gray.300" />}
                 />
-                <Input type="text" value={inputName} onChange={(e) => setInputName(e.target.value)} placeholder="Class" />
-                <Input type="text" value={inputThing} onChange={(e) => setInputThing(e.target.value)} placeholder="Homework" />
-                <Input type="date" value={inputDate} onChange={(e) => setInputDate(e.target.value)} placeholder="Event Date" />
-                
-                
-
+                <Input type="text" value={inputName} onChange={(e) => setInputName(e.target.value)} placeholder="Event Title" />
+                <Input type="date" value={inputDate} onChange={(e) => setInputDate(e.target.value)} placeholder="Event Title" />
                 <Button
-                    ml={4}
+                    ml={2}
                     onClick={() => sendData()}
                 >
-                    Add Todo
+                    Add
                 </Button>
             </InputGroup>
 
@@ -138,9 +122,8 @@ const Event = () => {
                         >
                             <Flex align="center">
                                 <Text fontSize="xl" mr={4}>{i + 1}.</Text>
-                                <Text>{item.eventName}&nbsp;</Text>
-                                <Text>{item.eventThing}&nbsp;</Text>
-                                <Text>{item.eventDate}</Text>
+                                <Text>{item.eventName}</Text>
+                                <Text>... {item.eventDate}</Text>
                             </Flex>
                             <IconButton onClick={() => deleteEvent(item.eventID)} icon={<DeleteIcon />} />
                         </Flex>
