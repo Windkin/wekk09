@@ -32,12 +32,11 @@ const Event = () => {
     // console.log(AuthUser)
     // console.log(todos)
 
-    useEffect(() => {
+   useEffect(() => {
         AuthUser.id &&
             firebase
                 .firestore()
                 .collection("events")
-                //.orderBy('timestamp', 'desc')
                 .where( 'user', '==', AuthUser.id )
                 .onSnapshot(
                   snapshot => {
@@ -49,14 +48,12 @@ const Event = () => {
                             eventName: doc.data().name,
                             eventThing: doc.data().thing,
                             eventDate: doc.data().date.toDate().toDateString()
-                          }
+                          }  
                         }
                       )
                     );
-                  }
-                )
-              }
-            )
+                })
+    })
                           
                         
     const sendData = () => {
@@ -164,4 +161,3 @@ export default withAuthUser({
     whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN,
     whenUnauthedBeforeInit: AuthAction.REDIRECT_TO_LOGIN,
 })(Event)
-
